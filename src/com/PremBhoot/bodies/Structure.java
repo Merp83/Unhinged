@@ -1,7 +1,7 @@
 package com.PremBhoot.bodies;
 
 import com.PremBhoot.TileMap.*;
-import com.PremBhoot.unhingedgame.GamePanel;
+import com.PremBhoot.unhingedgame.Panel;
 
 import java.awt.*;
 
@@ -115,8 +115,8 @@ public abstract class Structure {
     public int getCollisionheight(){ return collisionheight; }
 
     public boolean notOnScreen(){
-        return xPos+xPosMap+width <0 || xPos+xPosMap-width> GamePanel.WIDTH ||
-                yPos + yPosMap + height < 0 || yPos+yPosMap-height> GamePanel.HEIGHT;
+        return xPos+xPosMap+width <0 || xPos+xPosMap-width> Panel.WIDTH ||
+                yPos + yPosMap + height < 0 || yPos+yPosMap-height> Panel.HEIGHT;
     }
 
     public void setPos(double x, double y) {
@@ -141,9 +141,9 @@ public abstract class Structure {
 
     public void calculateCornerPos(double x, double y){
         int leftTile = (int)(x- collisionWidth / 2) / tileSize;
-        int rightTile = (int)(x - collisionWidth / 2 - 1) /tileSize;
+        int rightTile = (int)(x + collisionWidth / 2 - 1) /tileSize;
         int topTile = (int)(y- collisionheight / 2) / tileSize;
-        int bottomTile = (int)(y- collisionheight / 2 - 1) / tileSize;
+        int bottomTile = (int)(y+ collisionheight / 2 - 1) / tileSize;
 
         int tl = tilemap.getType(topTile, leftTile);
         int tr = tilemap.getType(topTile, rightTile);

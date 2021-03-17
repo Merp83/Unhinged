@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="jl1.0.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/out/production/Unhinged/mp3/jl1.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/Unhinged/mp3/mp3spi1.9.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/Unhinged/mp3/tritonus_share.jar!/" />
+      <root url="jar://H:/Documents/mysql-connector-java-8.0.23/mysql-connector-java-8.0.23.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

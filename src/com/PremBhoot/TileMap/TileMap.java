@@ -1,6 +1,6 @@
 package com.PremBhoot.TileMap;
 
-import com.PremBhoot.unhingedgame.GamePanel;
+import com.PremBhoot.unhingedgame.Panel;
 
 import java.awt.*;
 import java.awt.image.*;
@@ -34,8 +34,8 @@ public class TileMap {
 
     public TileMap(int tileSize) {
         this.tileSize = tileSize;
-        numRowsDraw = GamePanel.HEIGHT / tileSize + 2;
-        numColumnsDraw = GamePanel.WIDTH / tileSize + 2;
+        numRowsDraw = Panel.HEIGHT / tileSize + 2;
+        numColumnsDraw = Panel.WIDTH / tileSize + 2;
         smoothScroll = 0.08;
     }
 
@@ -45,12 +45,22 @@ public class TileMap {
             numTilesAcross = tileset.getWidth() / tileSize;
             tiles = new Tile[2][numTilesAcross];
 
+            //this under
             BufferedImage subimage;
             for(int column = 0; column < numTilesAcross; column++){
                 subimage = tileset.getSubimage(column*tileSize, 0, tileSize, tileSize);
-                tiles[0][column] = new Tile(subimage, Tile.FIXED);
+                if(column > 6 && column < 12){
+                    tiles[0][column] = new Tile(subimage, Tile.NORMAL);
+                } else {
+                    tiles[0][column] = new Tile(subimage, Tile.FIXED);
+                }
+
                 subimage = tileset.getSubimage(column*tileSize, tileSize, tileSize, tileSize);
-                tiles[1][column] = new Tile(subimage, Tile.NORMAL);
+                if(column==0 || column ==1) {
+                    tiles[1][column] = new Tile(subimage, Tile.FIXED);
+                } else {
+                    tiles[1][column] = new Tile(subimage, Tile.NORMAL);
+                }
             }
 
         } catch (Exception e){
@@ -68,9 +78,9 @@ public class TileMap {
             width = numColumns * tileSize;
             height = numRows * tileSize;
 
-            xMinimum = GamePanel.WIDTH - width;
+            xMinimum = Panel.WIDTH - width;
             xMax = 0;
-            yMinimum = GamePanel.HEIGHT - height;
+            yMinimum = Panel.HEIGHT - height;
             yMax = 0;
 
              //regex
@@ -93,11 +103,10 @@ public class TileMap {
     public int getHeight(){
         return height;
     }
-    public int getXPos(){
-        return (int)xPosition;
+    public double getXPos(){ return xPosition;
     }
-    public int getYPos(){
-        return (int)yPosition;
+    public double getYPos(){
+        return yPosition;
     }
     public int getTileSize(){
         return tileSize;

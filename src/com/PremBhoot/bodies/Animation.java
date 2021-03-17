@@ -8,7 +8,7 @@ public class Animation {
     private long delay;
     private boolean played;
 
-    public void Animation(){
+    public Animation(){
         played = false;
     }
     public void setFrames(BufferedImage[] frames){
@@ -34,5 +34,5 @@ public class Animation {
     public int getCurrentFrame(){ return currentFrame;}
     public BufferedImage getImage(){return frames[currentFrame];}
     public boolean hasPlayed(){return played;}
-
+        //this above
 }

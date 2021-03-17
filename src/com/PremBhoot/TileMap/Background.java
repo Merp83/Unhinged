@@ -1,7 +1,7 @@
 package com.PremBhoot.TileMap;
 
 
-import com.PremBhoot.unhingedgame.GamePanel;
+import com.PremBhoot.unhingedgame.Panel;
 
 import java.awt.*;
 import java.awt.image.*;
@@ -24,8 +24,8 @@ public class Background {
         }
     }
     public void setPosition(double x, double y) {
-        this.x = (x*moveScale) % GamePanel.WIDTH;
-        this.y = (y*moveScale) % GamePanel.HEIGHT;
+        this.x = (x*moveScale) % Panel.WIDTH;
+        this.y = (y*moveScale) % Panel.HEIGHT;
     }
     public void setVector(double dx, double dy) {
         this.dx = dx;
@@ -39,10 +39,10 @@ public class Background {
 
         g.drawImage(image, (int)x, (int)y, null);
         if (x<0) {
-            g.drawImage(image, (int)x + GamePanel.WIDTH, (int)y,null);
+            g.drawImage(image, (int)x + Panel.WIDTH, (int)y,null);
         }
         if (x>0) {
-            g.drawImage(image, (int)x - GamePanel.WIDTH, (int)y,null);
+            g.drawImage(image, (int)x - Panel.WIDTH, (int)y,null);
         }
 
     }
