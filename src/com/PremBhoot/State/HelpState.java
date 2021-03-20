@@ -15,12 +15,12 @@ public class HelpState extends State {
     private Font font;
     private BufferedImage[] images;
 
-    public HelpState(GameStateManager gsm){
+    public HelpState(GameStateManager gsm, String username, String userID){
         this.gsm = gsm;
         images = new BufferedImage[2];
         try {
-            bg = new Background("/BackgroundMenuSingle.png", 1);
-            bg.setVector(0, 0);
+            bg = new Background("/plain-white-background.jpg", 1);
+
 
             InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("Lady Radical.ttf");
             assert stream != null;
@@ -43,12 +43,10 @@ public class HelpState extends State {
 
     @Override
     public void init() {
-
     }
 
     @Override
     public void update() {
-       // bg.update();
     }
 
     @Override

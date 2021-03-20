@@ -8,6 +8,10 @@ import com.PremBhoot.TileMap.Background;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 
 
@@ -27,9 +31,18 @@ public class FirstLevelState extends State {
     private Background bg;
     private interfacex interfacex;
     private Player player;
+    private Connection con;
+    private PreparedStatement pst, pst2, pst3;
+    private ResultSet rs, rs2;
 
-    public FirstLevelState(GameStateManager gsm) {
+    private Float volume, playerSFX;
+
+    private String username, userID;
+
+    public FirstLevelState(GameStateManager gsm, String username, String userID) {
         this.gsm = gsm;
+        this.username = username;
+        this.userID = userID;
         init();
     }
 
@@ -55,7 +68,7 @@ public class FirstLevelState extends State {
         tileMap.setSmoothScroll(0.02);
 
         bg = new Background("/BackgroundLevel1State.gif", 1);
-        bg.setVector(0, 0);
+
         player = new Player(tileMap);
         player.setPos(100, 250);
 
@@ -99,6 +112,22 @@ public class FirstLevelState extends State {
         //all states before going into the state, it would play music in
         //menu state, thus added to update function with a boolean checking if it has played.
 
+        try{
+
+            con= DriverManager.getConnection("jdbc:mysql://localhost:3306/loginsystem", "root", "");
+            String query = "SELECT * FROM `settings` WHERE userID=?";
+            pst = con.prepareStatement(query);
+            pst.setString(1, userID);
+            rs = pst.executeQuery();
+
+           if(rs.next())
+            volume = (float) rs.getFloat(2);
+            playerSFX = (float) rs.getFloat(3);
+            //System.out.println(settings[0]);
+
+        } catch(Exception e){
+            e.printStackTrace();
+        }
 
 
     }
@@ -109,7 +138,8 @@ public class FirstLevelState extends State {
             music = new Music("/musicviafreemusicarchive.wav");
             music.play();
             musicStart = true;
-            music.setVolume(0.11);
+            music.setVolume(volume);
+            player.setSFXvolume(playerSFX);
         }
         player.update();
         tileMap.setCamera((int) (Panel.WIDTH / 2 - player.getx()), (int)(Panel.HEIGHT / 2));
@@ -196,6 +226,7 @@ public class FirstLevelState extends State {
             g.setFont(titleFont);
             g.drawString("You Finished in " + getCurrentTime() + " s", 120, Panel.HEIGHT/2);
             completeScreen = true;
+            uploadTime();
         }
     }
     private void clear(){
@@ -242,6 +273,37 @@ public class FirstLevelState extends State {
         if(k == KeyEvent.VK_W) player.setJump(false);
         if(k == KeyEvent.VK_E) player.setDash(false);
         if(k == KeyEvent.VK_T) player.setNinjaF(false);
+    }
+    private void uploadTime(){
+        long time = 999999;
+        try{
+            //System.out.println(userID);
+            //System.out.println(getCurrentTime());
+            con= DriverManager.getConnection("jdbc:mysql://localhost:3306/loginsystem", "root", "");
+            String query = "SELECT time FROM leveluser WHERE userID=?";
+            pst2 = con.prepareStatement(query);
+            pst2.setString(1,userID);
+            rs2 = pst2.executeQuery();
+            rs2.next();
+
+
+            time = rs2.getInt(1);
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        if(time > getCurrentTime()) {
+            try {
+                System.out.println("baka");
+                String query = "UPDATE leveluser SET time=? WHERE userID =? AND levelid=1";
+                pst3 = con.prepareStatement(query);
+                pst3.setInt(1, (int) getCurrentTime());
+                pst3.setString(2, userID);
+                pst3.execute();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

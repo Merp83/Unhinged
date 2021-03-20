@@ -64,6 +64,7 @@ public class Player extends Structure {
     private static final int NINJAF = 7;
 
     private Music jumpMusic;
+    private float SFXvolume;
 
     public Player(TileMap tm) {
         super(tm);
@@ -235,6 +236,8 @@ public class Player extends Structure {
         //System.out.println(throwingKnives);
         //System.out.println(dashAmmo);
         // System.out.println(ninjaFAmmo);
+        jumpMusic.setVolume(SFXvolume);
+
         dashAmmo += dashRegen;
         ninjaFAmmo += ninjaFRegen;
         if (ninjaF && (ninjaFAmmo > ninjaFCost)) {
@@ -484,4 +487,10 @@ public class Player extends Structure {
         //removes 1 life off the player
     }
 
+    public void setSFXvolume(float SFXvolume) {
+        this.SFXvolume = SFXvolume;
+    }
+    public float getSFXvolume(){
+        return SFXvolume;
+    }
 }

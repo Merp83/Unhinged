@@ -14,22 +14,28 @@ public class GameStateManager {
     // static final int LOGINSTATE = 0;
 
     public static final int MENUSTATE = 0;
-    public static final int FIRSTLEVELSTATE = 2;
     public static final int HELPSTATE = 1;
+    public static final int SETTINGSSTATE = 2;
+    public static final int SCORESTATE = 3;
+    public static final int FIRSTLEVELSTATE = 4;
 
     private String userID, username;
 
     public GameStateManager(String userID, String username){
+        this.userID = userID;
+        this.username = username;
+
         states = new ArrayList<State>();
 
        // currentState = LOGINSTATE;
         currentState = MENUSTATE;
       //states.add(new LoginState(this));
-        states.add(new MenuState(this, username));
-        states.add(new HelpState(this));
+        states.add(new MenuState (this, username, userID));
+        states.add(new HelpState(this, username, userID));
+        states.add(new SettingsState(this, username, userID));
+        states.add(new scoreState(this, username, userID));
 
-        this.userID = userID;
-        this.username = username;
+
 
 
     }

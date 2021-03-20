@@ -27,14 +27,7 @@ public class Background {
         this.x = (x*moveScale) % Panel.WIDTH;
         this.y = (y*moveScale) % Panel.HEIGHT;
     }
-    public void setVector(double dx, double dy) {
-        this.dx = dx;
-        this.dy = dy;
-    }
-    public void update(){
-        x+=dx;
-        y+=dy;
-    }
+
     public void draw(Graphics2D g) {
 
         g.drawImage(image, (int)x, (int)y, null);

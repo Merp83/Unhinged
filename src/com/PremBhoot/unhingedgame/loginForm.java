@@ -45,7 +45,7 @@ public class loginForm extends LoginStates {
         pan.add(usernameLabel);
 
        userLoginTextField = new JTextField();
-        userLoginTextField.setBounds(100, 20, 165, 25);
+        userLoginTextField.setBounds(100, 20, 205, 25);
         userLoginTextField.setFont(new Font("Verdana", Font.PLAIN, 12));
         pan.add(userLoginTextField);
 
@@ -55,7 +55,7 @@ public class loginForm extends LoginStates {
         pan.add(passwordLabel);
 
         passwordTextField = new JPasswordField();
-        passwordTextField.setBounds(100, 50, 165, 25);
+        passwordTextField.setBounds(100, 50, 205, 25);
         passwordTextField.setFont(new Font("Verdana", Font.PLAIN, 12));
         pan.add(passwordTextField);
 

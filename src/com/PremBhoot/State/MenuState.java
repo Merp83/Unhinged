@@ -10,18 +10,18 @@ import java.io.InputStream;
 public class MenuState extends State {
 
     private Background bg;
-    private String[] options = {"Start", "Settings", "Help", "Quit"};
+    private String[] options = {"Start", "Settings", "Help", "Scores", "Quit"};
     private int currentChoice = 0;
     private Color titleColor;
     private Font titleFont;
     private Font font;
-    private String username;
+    private String username, userID;
 
-    public MenuState( GameStateManager gsm, String username){
+    public MenuState( GameStateManager gsm, String username, String userID){
         this.gsm = gsm;
         try {
             bg = new Background("/BackgroundMenuSingle.png", 1);
-            bg.setVector(0, 0);
+
 
             InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("Lady Radical.ttf");
             assert stream != null;
@@ -39,12 +39,13 @@ public class MenuState extends State {
             e.printStackTrace();
         }
         this.username = username;
+        this.userID = userID;
     }
     public void init(){
 
     }
     public void update(){
-        bg.update();
+        return;
     }
     public void draw (Graphics2D g){
         //draw bg
@@ -66,6 +67,7 @@ public class MenuState extends State {
             g.drawString(options[i], 340, 130 + i * 30);
         }
         if(username.length() < 40) {
+            g.setColor(new Color(255, 0, 120));
             g.drawString("Welcome " + username, 7, 25);
         }
 
@@ -73,12 +75,12 @@ public class MenuState extends State {
     }
     private void select(){
         if (currentChoice == 0) {
-            gsm.states.add(2, new FirstLevelState(gsm));
+            gsm.states.add(4, new FirstLevelState(gsm, username, userID));
             gsm.setState(GameStateManager.FIRSTLEVELSTATE);
 
         }
         if (currentChoice == 1) {
-            System.out.println("1");
+            gsm.setState(GameStateManager.SETTINGSSTATE);
         }
         if (currentChoice == 2) {
 
@@ -86,7 +88,10 @@ public class MenuState extends State {
            // gsm.states.add(2, new HelpState(gsm));
             gsm.setState(GameStateManager.HELPSTATE);
         }
-        if (currentChoice == 3) {
+        if(currentChoice == 3){
+            gsm.setState(GameStateManager.SCORESTATE);
+        }
+        if (currentChoice == 4) {
             System.exit(0);
         }
     }
