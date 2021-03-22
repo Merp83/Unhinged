@@ -18,13 +18,16 @@ public class loginForm extends LoginStates {
     private boolean loggedIn;
 
     private LoginRegistrationManager lrm;
+    //needed for requesting username, userID after successful login and checking whether logged in - also for organisation of states
 
-    private Connection con = null;
-    private PreparedStatement pst = null;
-    private ResultSet rs = null;
+    private Connection con;
+    private PreparedStatement pst;
+    private ResultSet rs;
+    //sql variables
 
     private String username;
     private String userID;
+    //get username and userID and release to rest of game upon successful login
 
     public loginForm(LoginRegistrationManager lrm){
         this.lrm = lrm;

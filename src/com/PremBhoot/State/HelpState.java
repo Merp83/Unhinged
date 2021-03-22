@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.InputStream;
 
 public class HelpState extends State {
+    //private variables for drawing items
     private Background bg;
     private Color titleColor;
     private Font titleFont;
@@ -18,8 +19,10 @@ public class HelpState extends State {
     public HelpState(GameStateManager gsm, String username, String userID){
         this.gsm = gsm;
         images = new BufferedImage[2];
+        //buffered image array for grim and boss
         try {
-            bg = new Background("/plain-white-background.jpg", 1);
+            //get white background, spritesheet for grims and fonts to draw
+            bg = new Background("/plain-white-background.jpg");
 
 
             InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("Lady Radical.ttf");
@@ -54,6 +57,7 @@ public class HelpState extends State {
         bg.draw(g);
         g.setFont(titleFont);
         g.setColor(new Color(20, 20, 20));
+        //set font and colour, draw title and explanation of the game
         g.drawString("Help Page" , 220, 75);
 
         g.setFont(font);
@@ -69,6 +73,7 @@ public class HelpState extends State {
         g.drawString("movement abilities, floating and dashing..  ", 70, 305);
         g.drawString("Good luck... [press ESC to get going]", 150, 345);
 
+        //draw image of grims and boss to explain what the enemies are
         g.drawImage(images[0], 570, 189, -32, 32, null);
         g.drawImage(images[0], 580, 189, null);
         g.drawImage(images[1], 550, 250, 96, 96, null);
@@ -77,11 +82,12 @@ public class HelpState extends State {
 
     @Override
     public void keyPressed(int k) {
+        //escape returns to menu state
         if(k == KeyEvent.VK_ESCAPE){
             gsm.setState(GameStateManager.MENUSTATE);
         }
     }
-
+    //polymorphism override
     @Override
     public void keyReleased(int k) {
 
