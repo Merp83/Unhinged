@@ -10,25 +10,25 @@ import java.awt.image.BufferedImage;
 
 public class Player extends Structure {
 
-    private long immunityBegin;
+    private long immunityBegin; //timings for immunity if hit by another entity - cannot be attacked in this time
     private boolean immunity;
 
-    private double ninjaFCost;
+    private double ninjaFCost; //floating costs, ammo and max (less gravity)
     private double ninjaFRegen;
     private double ninjaFMax;
     private double ninjaFAmmo;
 
-    private double dashRegen;
+    private double dashRegen; //dash costs, ammo, max and differing movement whilst dashing (velocity)
     private double dashCost;
     private double dashAmmo;
     private double maxDash;
     private double dashMaxVelocity;
     private double dashAcceleration;
 
-    private int lives;
+    private int lives; //lives and maxlives
     private int maxLives;
 
-    private double throwingKnives;
+    private double throwingKnives; //number of attacks (ammo), max ammo, damage to entities and cost to use
     private double maxAmmo;
     private double ammoCost;
     private int attackDamage;
@@ -36,24 +36,24 @@ public class Player extends Structure {
     private boolean dead;
 
 
-    private boolean attack;
+    private boolean attack; //if attacking
 
 
-    public ArrayList<rangedAttack> attacks;
+    public ArrayList<rangedAttack> attacks; //arraylist of ninja stars
 
-    private boolean melee;
+    private boolean melee; //if doing melee attack, set to true
     private int meleeDamage;
     private int meleeRange;
-    private Font titleFont;
+    private Font titleFont; //not used
     private Color colour;
 
-    private boolean dash;
+    private boolean dash; //if using dash or ninja f
     private boolean ninjaF;
 
-    private ArrayList<BufferedImage[]> sprites;
+    private ArrayList<BufferedImage[]> sprites; //buffered image array of sprites doing different actions
     private final int[] amount = {2, 4, 1, 2, 4, 2, 2, 4};
 
-
+    //values to set when doing different actions (to change animation)
     private static final int STATIONARY = 0;
     private static final int RUNNING = 1;
     private static final int JUMPING = 2;
@@ -68,6 +68,8 @@ public class Player extends Structure {
 
     public Player(TileMap tm) {
         super(tm);
+        //call super with tilemap parameter
+        //initialise all physical properties of player, dimensions, hitboxes, ammo, lives, movement speeds and accelerations
         width = 32;
         height = 32;
         collisionheight = 26;
@@ -91,24 +93,26 @@ public class Player extends Structure {
         jumpS = -3;
         stopJump = 0.3;
 
-        facingRight = true;
+        facingRight = true; //draw sprite to right
 
         lives = maxLives = 3;
         ammoCost = 10;
         throwingKnives = maxAmmo = 30;
 
-        attacks = new ArrayList<rangedAttack>();
+        attacks = new ArrayList<rangedAttack>(); //initialise arraylist to add ninja star attacks to
         meleeDamage = 1;
         meleeRange = 26;
         attackDamage = 34;
 
         try {
+            //import spritesheet - try catch used
             BufferedImage spritesheet = ImageIO.read(getClass().getResourceAsStream("/UnhingedNinjaSprite3.gif"));
 
             sprites = new ArrayList<BufferedImage[]>();
-
+            //initialise arraylist of sprites
 
             for (int i = 0; i < 8; i++) {
+                //split spritesheet into individual sprites for each animation, split into sub images - use embedded for loop as sprite sheet is 2d.
                 BufferedImage[] b = new BufferedImage[amount[i]];
                 for (int j = 0; j < amount[i]; j++) {
                     b[j] = spritesheet.getSubimage(j * width, i * height, width, height);
@@ -118,15 +122,17 @@ public class Player extends Structure {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        //set action to stationary and stationary animation
         animation = new Animation();
         action = STATIONARY;
         animation.setFrames(sprites.get(STATIONARY));
         animation.setDelay(600);
 
+        //initialise music object with jump sound - wav file as java requires uncompressed music file formats
         jumpMusic = new Music("/jump.wav");
 
     }
-
+    //getters and setters for lives, ammunition and set to attack
     public int getLives() {
         return lives;
     }
@@ -169,28 +175,37 @@ public class Player extends Structure {
 
     private void getNextPosition() {
         if (left || ((!facingRight) && dash)) {
+            //if moving to the left (key pressed) or facing the left, but not clicking left arrow and the user has dashed.
             if (dash) {
                 dx -= dashAcceleration;
+                //set to dx to -dash acceleration, higher acceleration
             } else {
                 dx -= acceleration;
+                //otherwise set to normal acceleration
             }
             if (dx < -maxVelocity && !dash) {
                 dx = -maxVelocity;
+                //if not dashing, and passes limiting value of max velocity, set to max velocity (-ve)
             } else if (dx < -dashMaxVelocity && dash) {
                 dx = -dashMaxVelocity;
+                //if dashing, and exceeds max dash velocity, set to max dash velocity (-ve)
             }
         } else if (right || ((facingRight) && dash)) {
+            //if moving to the right or facing the right and dashing
             if (dash) {
+                //if dashing add dash acceleration to dx
                 dx += dashAcceleration;
             } else {
+                //else add normal acceleration
                 dx += acceleration;
             }
             if (dx > maxVelocity && !dash) {
-                dx = maxVelocity;
+                dx = maxVelocity; //if exceeding max velocity whilst not dashing, set to max velocity
             } else if (dx > dashMaxVelocity && dash) {
-                dx = dashMaxVelocity;
+                dx = dashMaxVelocity; //if exceeding dash max velocity whilst dashing, set to max dash velocity
             }
         } else {
+            //if not pressing left right or dash, and moving, decelerate to 0
             if (dx > 0) {
                 dx -= deceleration;
                 if (dx < 0) {
@@ -210,33 +225,35 @@ public class Player extends Structure {
         }*/
 
         if (jump && !fall && ninjaF) {
-            dy = jumpS * 1.15;
-            jumpMusic.play();
-            fall = true;
+            //if jumping and floating, and not falling
+            dy = jumpS * 1.15; //set dy to jump value * constant, for increased jump
+            jumpMusic.play(); //set music clip for jump to 0 frame and play
+            fall = true; //set to falling so doesnt not repeat and falls back
         } else if (jump && !fall) {
-            dy = jumpS;
-            fall = true;
+            dy = jumpS; //if jump and not floating, and not falling - not multiplied by constant
+            fall = true; //set jump music and fall
             jumpMusic.play();
         }
         if (fall) {
             if (dy > 0 && dash) {
-                dy += g * 0.35;
+                dy += g * 0.35; //g set to 0.35g when dashing, slightly less [vertical acceleration]
             } else if (dy > 0 && ninjaF) {
-                dy += g * 0.05;
+                dy += g * 0.05; //g set to 0.05g when floating, considerably less [vertical acceleration]
             } else {
-                dy += g;
+                dy += g; //if not dashing or floating
             }
-            if (dy > 0) jump = false;
-            if (dy < 0 && !jump) dy += stopJump;
-            if (dy > terminalVelocity) dy = terminalVelocity;
+            //limiting cases
+            if (dy > 0) jump = false; //if jumping (or falling), jump must be set to false - jump is only for a single update cycle
+            if (dy < 0 && !jump) dy += stopJump; //jump
+            if (dy > terminalVelocity) dy = terminalVelocity; //prevents from exceeding terminal velocity
         }
     }
 
     public void update() {
         //System.out.println(throwingKnives);
         //System.out.println(dashAmmo);
-        // System.out.println(ninjaFAmmo);
-        jumpMusic.setVolume(SFXvolume);
+        // System.out.println(ninjaFAmmo); test
+        jumpMusic.setVolume(SFXvolume); //set volume from database
 
         dashAmmo += dashRegen;
         ninjaFAmmo += ninjaFRegen;
