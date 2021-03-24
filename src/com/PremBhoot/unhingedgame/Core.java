@@ -3,9 +3,7 @@ package com.PremBhoot.unhingedgame;
 import javax.swing.*;
 import java.util.concurrent.TimeUnit;
 
-
 public class Core {
-
     public static void main(String[] args) {
             //boolean value which checks whether in the login screens if the user has logged in
             boolean loggedin=false;
@@ -39,9 +37,6 @@ public class Core {
         Game.setResizable(false);
         Game.pack();
         Game.setVisible(true);
-
-
-
 
     }
 }

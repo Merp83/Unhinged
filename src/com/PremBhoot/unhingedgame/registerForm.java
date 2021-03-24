@@ -249,7 +249,8 @@ public class registerForm extends LoginStates {
         lrm.registrationToLogin();
     }
     private void populate(){
-        //populate hashmap with characters for userid.
+        //populate hashmap with characters for userid. use for loop
+        //with ascii values next time
         character = new HashMap<Integer, String>();
         character.put(1, "1");
         character.put(2, "2");

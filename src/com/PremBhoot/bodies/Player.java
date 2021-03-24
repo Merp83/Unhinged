@@ -255,44 +255,47 @@ public class Player extends Structure {
         // System.out.println(ninjaFAmmo); test
         jumpMusic.setVolume(SFXvolume); //set volume from database
 
+        //add values to dash and ninja float every update cycle
         dashAmmo += dashRegen;
         ninjaFAmmo += ninjaFRegen;
         if (ninjaF && (ninjaFAmmo > ninjaFCost)) {
-            action = NINJAF;
+            action = NINJAF;    //if key pressed to float and there is enough ammo, float
             ninjaFAmmo -= ninjaFCost;
         }
         if (ninjaF && (ninjaFAmmo < ninjaFCost)) {
-            action = STATIONARY;
+            action = STATIONARY;    //if key pressed to float, but not enough ammo - stationary
             ninjaF = false;
         }
-        if (ninjaFAmmo > ninjaFMax) ninjaFAmmo = ninjaFMax;
+        if (ninjaFAmmo > ninjaFMax) ninjaFAmmo = ninjaFMax; //limiting case
         //if(dash) System.out.println("yy");
 
         if (dash && (dashAmmo > dashCost)) {
-            //System.out.println("x");
-            action = DASH;
+            //System.out.println("x"); test
+            action = DASH;  //if pressing dash key and enough ammo, dash, else set to stationary
             dashAmmo -= dashCost;
         }
         if (dash && (dashAmmo < dashCost)) {
             action = STATIONARY;
             dash = false;
         }
-        if (dashAmmo > maxDash) dashAmmo = maxDash;
+        if (dashAmmo > maxDash) dashAmmo = maxDash; //limitting case
 
 
-        getNextPosition();
+        getNextPosition();  //get dx and dy values
+        //go into structure entity and check if there any collisions, get values for xPosTemp and yPosTemp, using dx and dy
+        //if there are collisions do not increment position by dx or dy in that dimension
         checkCollisionTileMap();
-        setPos(xPosTemp, yPosTemp);
+        setPos(xPosTemp, yPosTemp); //set new position to values calculation
 
 
         //attack
-        throwingKnives += 0.03;
+        throwingKnives += 0.03; //increase throwing star ammo every update cycle
         if (throwingKnives > maxAmmo) {
-            throwingKnives = maxAmmo;
+            throwingKnives = maxAmmo; //prevents from going above max -limiting case
         }
-        if (attack && action != ATTACK) {
-            if (throwingKnives > ammoCost) {
-                action = ATTACK;
+        if (attack && action != ATTACK) { //if pressing attack yet and action not set to attack
+            if (throwingKnives > ammoCost) { //if enough ammo
+                action = ATTACK; //set action to attack, remove ammocost from ammo, create a ranged attack object, set position and add to arraylist, set animation
                 throwingKnives -= ammoCost;
                 rangedAttack att = new rangedAttack(tilemap, facingRight);
                 att.setPos(xPos, yPos);
@@ -303,26 +306,28 @@ public class Player extends Structure {
             }
 
         }
-        for (int i = 0; i < attacks.size(); i++) {
+        for (int i = 0; i < attacks.size(); i++) { //check if all attacks are finished
             attacks.get(i).update();
             if (attacks.get(i).isFinished()) {
                 attacks.remove(i);
                 i--;
             }
         }
+        //check what keys are being pressed, change action to the value and change animation
+        //last animation changes are most important (take priority) as they are also checked and animation changed.
+        //set frames of all animation, corresponding delay for animation set
         if (melee) {
             if (action != MELEE) {
                 action = MELEE;
                 animation.setFrames(sprites.get(MELEE));
                 animation.setDelay(150);
-                width = 32;
             }
         } else if (attack) {
             if (action != ATTACK) {
                 action = ATTACK;
                 animation.setFrames(sprites.get(ATTACK));
                 animation.setDelay(150);
-                width = 32;
+
             }
         } else if (dy > 0) {
             if (dash) {
@@ -330,40 +335,42 @@ public class Player extends Structure {
                     action = DASH;
                     animation.setFrames(sprites.get(DASH));
                     animation.setDelay(100);
-                    width = 32;
+
                 }
             } else if (action != FALLING) {
                 action = FALLING;
                 animation.setFrames(sprites.get(FALLING));
                 animation.setDelay(100);
-                width = 32;
+
             }
         } else if (dy < 0) {
-            if (ninjaF) {
-                action = NINJAF;
-                animation.setFrames(sprites.get(NINJAF));
-                animation.setDelay(100);
-                width = 32;
-            }
+
             if (action != JUMPING && !ninjaF) {
                 action = JUMPING;
                 animation.setFrames(sprites.get(JUMPING));
                 animation.setDelay(100);
-                width = 32;
+
+            }
+            //moved ninjaF check to after so float animation would show - later has priority
+            if (ninjaF) {
+                action = NINJAF;
+                animation.setFrames(sprites.get(NINJAF));
+                animation.setDelay(100);
+
             }
         } else if (left || right) {
             if (action != RUNNING) {
                 action = RUNNING;
                 animation.setFrames(sprites.get(RUNNING));
                 animation.setDelay(75);
-                width = 32;
+
             }
         } else {
             if (action != STATIONARY) {
                 action = STATIONARY;
                 animation.setFrames(sprites.get(STATIONARY));
                 animation.setDelay(250);
-                width = 32;
+
             }
         }
         if (ninjaF) {
@@ -371,7 +378,7 @@ public class Player extends Structure {
                 action = NINJAF;
                 animation.setFrames(sprites.get(NINJAF));
                 animation.setDelay(100);
-                width = 32;
+
             }
         }
         animation.update();
@@ -395,7 +402,7 @@ public class Player extends Structure {
 
         //check if immunity has finished
         if((System.nanoTime() - immunityBegin > 1500000000) && immunity) immunity = false;
-        //if over 20s from last attack, give 3 lives back - check it does not exceed maxLives
+        //if over 30s from last attack, give 3 lives back - check it does not exceed maxLives
         long L = 30000000000L;
         if((System.nanoTime() - immunityBegin > L) && lives!=maxLives){
             lives++;
@@ -408,16 +415,16 @@ public class Player extends Structure {
 
 
         for (int i = 0; i < attacks.size(); i++) {
-            attacks.get(i).draw(g);
+            attacks.get(i).draw(g); //draw attacks from array
         }
 
-        if (facingRight) {
+        if (facingRight) {  //if facing right draw normally
             g.drawImage(animation.getImage(),
                     (int) (xPos + xPosMap - width / 2),
                     (int) (yPos + yPosMap - height / 2),
                     null);
         } else {
-            g.drawImage(animation.getImage(),
+            g.drawImage(animation.getImage(), //if facing left reflect
                     (int) (xPos + xPosMap - width / 2 + width),
                     (int) (yPos + yPosMap - height / 2),
                     -width,
@@ -427,50 +434,56 @@ public class Player extends Structure {
     }
 
     public void checkAttack(ArrayList<Mobs> mobs, Boss boss) {
-        //check melee
+        //check attacks every update cycle
         //this - hitboxes
-        if (melee) {
+        if (melee) { //melee attacks
             if (facingRight) {
-                boolean hit = false;
+                boolean hit = false; //used so that a boss doesnt get hit twice (larger hitbox for boss)
                 for (int i = 0; i < mobs.size(); i++) {
-                    Mobs e = mobs.get(i);
-                    if (e.getx() > xPos && e.getx() < xPos + meleeRange*2 &&
+                    Mobs e = mobs.get(i);   //get mob
+                    //when facing right, check the position of entity is to right of player
+                    //then check if that the position of the entity is not further than two melee widths away from the player
+                    //then add vertical range of 1/2 height above and 1/2 height below
+                    if (e.getx() > xPos && e.getx() < xPos + meleeRange*2.5 &&
                             e.gety() > yPos - height / 2 && e.gety() < yPos + height / 2) {
-                        e.hit(meleeDamage);
-                        hit=true;
-                        break;
+                        e.hit(meleeDamage); //if in the range and using melee attack, then hit the mob
+                        hit=true;   // set to hit (used only for boss)
+                        break;  //if hit do not check for rest of mobs - can only hit 1 mob at a time
                     }
                 }
                 //this under div2
                 //stop it checking twice using hit parameter - larger range below - big hitbox
-                if(!hit && boss.getx()>xPos && boss.getx()<xPos+meleeRange*2 && boss.gety()>yPos-height
-                    &&boss.gety() <yPos + height){
-                    boss.hit(meleeDamage);
+                if(!hit && boss.getx()>xPos && boss.getx()<xPos+meleeRange*2.5 && boss.gety()>yPos-boss.getheight()
+                    &&boss.gety() <yPos + boss.getheight()){
+                    boss.hit(meleeDamage);  //hitbox for boss has 25% larger x width and 50% larger height as it is a larger entity
                 }
-            } else {
-                boolean hit=false;
+            } else {    //opposite signs for attacking entities on the left (if player is facing left)
+                boolean hit=false;//for boss
                 for (int i = 0; i < mobs.size(); i++) {
                     Mobs e = mobs.get(i);
                     if (e.getx() < xPos && e.getx() > xPos - meleeRange &&
                             e.gety() > yPos - height / 2 && e.gety() < yPos + height / 2) {
-                        hit=true;
+                        hit=true;   //check if entity is on the left, and not further than 2 melee ranges to the left,
+                        //check within +-1/2height of the player
+                        //if in range reduce health of entity by melee damage
                         e.hit(meleeDamage);
                         break;
                     }
                 }
-                if(!hit && boss.getx()<xPos && boss.getx()>xPos-meleeRange*2 && boss.gety()>yPos-height
-                        &&boss.gety() <yPos + height) {
-                    boss.hit(meleeDamage);
+                if(!hit && boss.getx()<xPos && boss.getx()>xPos-meleeRange*2.5 && boss.gety()>yPos-boss.getheight()
+                        &&boss.gety() <yPos + boss.getheight()) {
+                    boss.hit(meleeDamage); //larger range for boss, only used if not already hit with smaller hitbox
                 }
             }
 
         }
+        //now check the ranged attacks and if they intersect with any
         for(int j=0; j<attacks.size(); j++){
             for(int i=0; i<mobs.size(); i++){
-                if(attacks.get(j).intersects(mobs.get(i))){
+                if(attacks.get(j).intersects(mobs.get(i))){ //check if rectangle of boss intersects attack
                     mobs.get(i).hit(attackDamage);
                     attacks.get(j).setHitEntity();
-                    //this under
+                    //this under - does not show animation, had to remove it from array as it would continually do damage, even though it had to be removed
 
                     attacks.remove(j);
                     j--;
@@ -491,7 +504,7 @@ public class Player extends Structure {
         //check collisions with player and mobs
         for(int i=0; i<mobs.size(); i++){
             if(this.intersects(mobs.get(i)) && !immunity){
-                getHit();
+                getHit();   //if player intersects with mobs and not immune to attacks, reduce health
             }
         }
     }
@@ -509,5 +522,5 @@ public class Player extends Structure {
     }
     public float getSFXvolume(){
         return SFXvolume;
-    }
+    }   //getters and setters
 }
