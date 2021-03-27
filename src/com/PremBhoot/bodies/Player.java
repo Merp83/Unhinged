@@ -512,7 +512,6 @@ public class Player extends Structure {
         lives--;
         immunityBegin = System.nanoTime();
         immunity=true;
-
         //provide 1.5s of immunity from further collisions so it only
         //removes 1 life off the player
     }
